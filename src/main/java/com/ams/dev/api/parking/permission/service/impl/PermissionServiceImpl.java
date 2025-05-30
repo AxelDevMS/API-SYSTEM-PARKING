@@ -3,6 +3,7 @@ package com.ams.dev.api.parking.permission.service.impl;
 import com.ams.dev.api.parking.dto.ApiResponseDto;
 import com.ams.dev.api.parking.dto.ValidateInputDto;
 import com.ams.dev.api.parking.exception.BadRequestException;
+import com.ams.dev.api.parking.exception.NotFoundException;
 import com.ams.dev.api.parking.permission.dto.PermissionDto;
 import com.ams.dev.api.parking.permission.mapper.PermissionMapper;
 import com.ams.dev.api.parking.permission.persistence.entity.PermissionEntity;
@@ -15,6 +16,7 @@ import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class PermissionServiceImpl implements PermissionService {
@@ -27,7 +29,7 @@ public class PermissionServiceImpl implements PermissionService {
 
 
     @Override
-    public ApiResponseDto save(PermissionDto permissionDto, BindingResult bindingResult) throws BadRequestException {
+    public ApiResponseDto executeCreatePermission(PermissionDto permissionDto, BindingResult bindingResult) throws BadRequestException {
 
         List<ValidateInputDto> listInputs = this.validateInputs(bindingResult);
         if (!listInputs.isEmpty())
@@ -42,6 +44,25 @@ public class PermissionServiceImpl implements PermissionService {
         return new ApiResponseDto(HttpStatus.CREATED.value(),"El registro de inserto correctamente", permissionMapper.convertToDto(save));
     }
 
+    @Override
+    public ApiResponseDto executeUpdatePermisison(UUID idPermission, PermissionDto permissionDto, BindingResult bindingResult) throws BadRequestException, NotFoundException {
+
+        List<ValidateInputDto> listInputs =  this.validateInputs(bindingResult);
+        if (!listInputs.isEmpty())
+            throw new BadRequestException("Campos invalidos", listInputs);
+
+        PermissionEntity permissionBD = this.permissionRepository.findById(idPermission).orElse(null);
+        if (permissionBD == null)
+            throw new NotFoundException("No se encontro el permiso con ID "+ idPermission);
+
+        permissionBD.setName(permissionDto.getName());
+        permissionBD.setModule(permissionDto.getModule());
+        permissionBD.setDescription(permissionDto.getDescription());
+        permissionBD.setStatus(permissionDto.getStatus());
+        PermissionEntity permissionEdit = this.permissionRepository.save(this.permissionMapper.convertToEntity(permissionDto));
+
+        return new ApiResponseDto(HttpStatus.CREATED.value(),"El registro se actualizo de forma correcta",this.permissionMapper.convertToDto(permissionEdit));
+    }
 
     private List<ValidateInputDto> validateInputs(BindingResult bindingResult){
         List<ValidateInputDto> validateFieldInputs = new ArrayList<>();
@@ -55,6 +76,8 @@ public class PermissionServiceImpl implements PermissionService {
         }
         return validateFieldInputs;
     }
+
+
 
 
 }
