@@ -4,6 +4,7 @@ import com.ams.dev.api.parking.dto.ApiResponseDto;
 import com.ams.dev.api.parking.dto.ValidateInputDto;
 import com.ams.dev.api.parking.exception.BadRequestException;
 import com.ams.dev.api.parking.exception.NotFoundException;
+import com.ams.dev.api.parking.permission.dto.DisabledPermissionDto;
 import com.ams.dev.api.parking.permission.dto.PermissionDto;
 import com.ams.dev.api.parking.permission.mapper.PermissionMapper;
 import com.ams.dev.api.parking.permission.persistence.entity.PermissionEntity;
@@ -59,9 +60,23 @@ public class PermissionServiceImpl implements PermissionService {
         permissionBD.setModule(permissionDto.getModule());
         permissionBD.setDescription(permissionDto.getDescription());
         permissionBD.setStatus(permissionDto.getStatus());
-        PermissionEntity permissionEdit = this.permissionRepository.save(this.permissionMapper.convertToEntity(permissionDto));
+        PermissionEntity permissionEdit = this.permissionRepository.save(permissionBD);
 
-        return new ApiResponseDto(HttpStatus.CREATED.value(),"El registro se actualizo de forma correcta",this.permissionMapper.convertToDto(permissionEdit));
+        return new ApiResponseDto(HttpStatus.OK.value(),"El registro se actualizo de forma correcta",this.permissionMapper.convertToDto(permissionEdit));
+    }
+
+    @Override
+    public ApiResponseDto executeDisabledPermission(UUID idPermission, DisabledPermissionDto disabledDto) throws NotFoundException {
+
+        PermissionEntity permissionBD = this.permissionRepository.findById(idPermission).orElse(null);
+        if (permissionBD == null)
+            throw new NotFoundException("No se encontro el permiso con ID "+ idPermission);
+
+        permissionBD.setStatus(disabledDto.getStatus());
+        PermissionEntity permisisonDisabled = this.permissionRepository.save(permissionBD);
+
+        return new ApiResponseDto(HttpStatus.OK.value(),"El registro cambio de estado de forma exitosa", this.permissionMapper.convertToDto(permisisonDisabled));
+
     }
 
     private List<ValidateInputDto> validateInputs(BindingResult bindingResult){
