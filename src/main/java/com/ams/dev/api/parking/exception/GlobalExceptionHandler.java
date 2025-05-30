@@ -1,21 +1,18 @@
 package com.ams.dev.api.parking.exception;
-
-
-import com.ams.dev.api.parking.dto.ApiResponseErrorDto;
+import com.ams.dev.api.parking.dto.ApiResponseFailedDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponseErrorDto> handleException(Exception e){
-        ApiResponseErrorDto response = new ApiResponseErrorDto();
+    public ResponseEntity<?> handleException(Exception e){
+        ApiResponseFailedDto response = new ApiResponseFailedDto();
         response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
         response.setMessage("Internal Server Error");
         response.setDebugMessage(e.getMessage());
@@ -24,9 +21,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ApiResponseErrorDto> notFoundException(Exception e){
-        ApiResponseErrorDto response = new ApiResponseErrorDto();
-        response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    public ResponseEntity<ApiResponseFailedDto> notFoundException(Exception e){
+        ApiResponseFailedDto response = new ApiResponseFailedDto();
+        response.setStatusCode(HttpStatus.NOT_FOUND.value());
         response.setMessage("Not Found Error");
         response.setDebugMessage(e.getMessage());
         response.setTimestamp(LocalDateTime.now());
@@ -34,12 +31,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ApiResponseErrorDto> badRequestException(Exception e){
-        ApiResponseErrorDto response = new ApiResponseErrorDto();
-        response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        response.setMessage("Not Found Error");
+    public ResponseEntity<ApiResponseFailedDto> badRequestException(Exception e, BadRequestException badRequestException){
+        ApiResponseFailedDto response = new ApiResponseFailedDto();
+        response.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        response.setMessage("Bad Request Error");
         response.setDebugMessage(e.getMessage());
+        response.setSubErrors(badRequestException.getSubErrors());
         response.setTimestamp(LocalDateTime.now());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
 }

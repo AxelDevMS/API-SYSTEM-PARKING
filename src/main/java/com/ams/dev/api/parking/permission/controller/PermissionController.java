@@ -1,8 +1,10 @@
 package com.ams.dev.api.parking.permission.controller;
 
 import com.ams.dev.api.parking.dto.ApiResponseDto;
+import com.ams.dev.api.parking.exception.BadRequestException;
 import com.ams.dev.api.parking.permission.dto.PermissionDto;
 import com.ams.dev.api.parking.permission.service.PermissionService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +20,7 @@ public class PermissionController {
 
 
     @PostMapping("/save")
-    public ResponseEntity<?> executeCrate(@RequestBody PermissionDto permissionDto, BindingResult bindingResult){
+    public ResponseEntity<?> executeCrate(@Valid  @RequestBody PermissionDto permissionDto, BindingResult bindingResult) throws BadRequestException {
         ApiResponseDto response = this.permissionService.save(permissionDto,bindingResult);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
