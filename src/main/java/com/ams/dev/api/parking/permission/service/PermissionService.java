@@ -6,4 +6,5 @@ import org.springframework.validation.BindingResult;
 
 public interface PermissionService {
     ApiResponseDto save(PermissionDto permissionDto, BindingResult bindingResult);
+
 }
