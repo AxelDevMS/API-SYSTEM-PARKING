@@ -133,7 +133,7 @@ public class PermissionServiceImpl implements PermissionService {
             PermissionEntity permissionBD = this.permissionRepository.findById(dto.getId()).orElse(null);
 
             if (permissionBD == null)
-                throw new NotFoundException("El permiso con nombre " + dto.getName() + " no existe");
+                throw new NotFoundException("El permiso con id " + dto.getId() + " no existe");
 
             if (permissionBD.getStatus().equals(StatusPermisison.DELETED))
                 throw new BadRequestException("No se puede asigar este el rol " + permissionBD.getName() + " porque esta con estatus eliminado");
