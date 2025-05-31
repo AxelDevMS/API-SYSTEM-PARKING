@@ -60,5 +60,11 @@ public class PermissionController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/alls/select")
+    public ResponseEntity<ApiResponseDto> executeGetPermissionBySelect() throws NotFoundException {
+        ApiResponseDto response = this.permissionService.executeGetListPermisisons();
+        return ResponseEntity.ok(response);
+    }
+
 
 }

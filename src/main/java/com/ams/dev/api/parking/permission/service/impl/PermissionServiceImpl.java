@@ -45,6 +45,16 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
+    public ApiResponseDto executeGetListPermisisons() throws NotFoundException {
+        List<PermissionEntity> permissions = this.permissionRepository.findAll();
+        if (permissions.isEmpty())
+            throw new NotFoundException("No hay registros en la tabla permisos");
+
+        List<PermissionDto> permissionDtos = permissions.stream().map(permissionMapper::convertToDto).collect(Collectors.toList());
+        return new ApiResponseDto(HttpStatus.OK.value(),"Lista de registros",permissionDtos);
+    }
+
+    @Override
     public ApiResponseDto executeListPermisisons(UUID idPermission, String name, String module, String status, int page, int size) throws NotFoundException {
         Pageable pageable = PageRequest.of(page,size);
         Specification<PermissionEntity> spec = SpecificationPermission.withFilter(idPermission,name,module,status);

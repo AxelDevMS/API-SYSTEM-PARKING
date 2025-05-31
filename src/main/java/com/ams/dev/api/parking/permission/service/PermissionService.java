@@ -15,4 +15,5 @@ public interface PermissionService {
     ApiResponseDto executeDisabledPermission(UUID idPermission, DisabledPermissionDto disabledDto) throws NotFoundException;
     ApiResponseDto executeListPermisisons(UUID idPermission, String name, String module, String status,  int page, int size) throws NotFoundException;
     ApiResponseDto executeGetPermission(UUID idPermission) throws NotFoundException;
+    ApiResponseDto executeGetListPermisisons() throws NotFoundException;
 }
