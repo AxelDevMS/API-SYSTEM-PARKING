@@ -13,5 +13,5 @@ public interface PermissionService {
     ApiResponseDto executeCreatePermission(PermissionDto permissionDto, BindingResult bindingResult) throws BadRequestException;
     ApiResponseDto executeUpdatePermisison(UUID idPermission, PermissionDto permissionDto, BindingResult bindingResult) throws BadRequestException, NotFoundException;
     ApiResponseDto executeDisabledPermission(UUID idPermission, DisabledPermissionDto disabledDto) throws NotFoundException;
-
+    ApiResponseDto executeListPermisisons(UUID idPermission, String name, String module, String status,  int page, int size) throws NotFoundException;;
 }

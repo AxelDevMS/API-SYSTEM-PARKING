@@ -6,11 +6,17 @@ import com.ams.dev.api.parking.exception.BadRequestException;
 import com.ams.dev.api.parking.exception.NotFoundException;
 import com.ams.dev.api.parking.permission.dto.DisabledPermissionDto;
 import com.ams.dev.api.parking.permission.dto.PermissionDto;
+import com.ams.dev.api.parking.permission.dto.PermissionsListDto;
 import com.ams.dev.api.parking.permission.mapper.PermissionMapper;
 import com.ams.dev.api.parking.permission.persistence.entity.PermissionEntity;
 import com.ams.dev.api.parking.permission.persistence.repository.PermissionRepository;
+import com.ams.dev.api.parking.permission.persistence.specification.SpecificationPermission;
 import com.ams.dev.api.parking.permission.service.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -18,6 +24,7 @@ import org.springframework.validation.BindingResult;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class PermissionServiceImpl implements PermissionService {
@@ -28,6 +35,25 @@ public class PermissionServiceImpl implements PermissionService {
     @Autowired
     private PermissionRepository permissionRepository;
 
+    @Override
+    public ApiResponseDto executeListPermisisons(UUID idPermission, String name, String module, String status, int page, int size) throws NotFoundException {
+        Pageable pageable = PageRequest.of(page,size);
+        Specification<PermissionEntity> spec = SpecificationPermission.withFilter(idPermission,name,module,status);
+        Page<PermissionEntity> listPermissions = this.permissionRepository.findAll(spec, pageable);
+
+        if (listPermissions.isEmpty())
+            throw new NotFoundException("No hay registros en la base de datos");
+
+        // Convertimos los entities a DTOs
+        List<PermissionDto> dtoList = listPermissions.getContent().stream().map(permissionMapper::convertToDto).collect(Collectors.toList());
+
+        // Creamos el objeto de respuesta personalizada
+        PermissionsListDto responseData = new PermissionsListDto();
+        responseData.setPermissionDtos(dtoList);
+        responseData.setTotalElements((int) listPermissions.getTotalElements());
+
+        return new ApiResponseDto(HttpStatus.OK.value(), "Lista de permisos paginada", responseData);
+    }
 
     @Override
     public ApiResponseDto executeCreatePermission(PermissionDto permissionDto, BindingResult bindingResult) throws BadRequestException {

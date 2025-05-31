@@ -41,5 +41,18 @@ public class PermissionController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
+    @GetMapping("/alls")
+    public ResponseEntity<ApiResponseDto> executeListPermissions(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) UUID idPermission,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String module,
+            @RequestParam(required = false) String status
+    ) throws NotFoundException{
+        ApiResponseDto response = this.permissionService.executeListPermisisons(idPermission, name, module, status, page, size);
+        return ResponseEntity.ok(response);
+    }
+
 
 }
