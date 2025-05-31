@@ -3,11 +3,13 @@ package com.ams.dev.api.parking.permission.persistence.entity;
 import com.ams.dev.api.parking.permission.util.ModuleSystem;
 import com.ams.dev.api.parking.permission.util.NamePermission;
 import com.ams.dev.api.parking.permission.util.StatusPermisison;
+import com.ams.dev.api.parking.role.persistence.entity.RoleEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -29,6 +31,9 @@ public class PermissionEntity {
 
     @Enumerated(EnumType.STRING)
     private ModuleSystem module;
+
+    @ManyToMany(mappedBy = "permissions")
+    private List<RoleEntity> roles;
 
     @CreationTimestamp
     private Date createdAt;
@@ -90,5 +95,13 @@ public class PermissionEntity {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<RoleEntity> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<RoleEntity> roles) {
+        this.roles = roles;
     }
 }
