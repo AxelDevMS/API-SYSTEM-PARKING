@@ -5,8 +5,10 @@ import com.ams.dev.api.parking.exception.BadRequestException;
 import com.ams.dev.api.parking.exception.NotFoundException;
 import com.ams.dev.api.parking.permission.dto.DisabledPermissionDto;
 import com.ams.dev.api.parking.permission.dto.PermissionDto;
+import com.ams.dev.api.parking.permission.persistence.entity.PermissionEntity;
 import org.springframework.validation.BindingResult;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface PermissionService {
@@ -16,4 +18,5 @@ public interface PermissionService {
     ApiResponseDto executeListPermisisons(UUID idPermission, String name, String module, String status,  int page, int size) throws NotFoundException;
     ApiResponseDto executeGetPermission(UUID idPermission) throws NotFoundException;
     ApiResponseDto executeGetListPermisisons() throws NotFoundException;
+    List<PermissionEntity> validatePermissions(List<PermissionDto> permissionDtos) throws BadRequestException,NotFoundException;
 }

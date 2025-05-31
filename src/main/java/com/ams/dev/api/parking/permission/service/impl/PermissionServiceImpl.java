@@ -12,6 +12,7 @@ import com.ams.dev.api.parking.permission.persistence.entity.PermissionEntity;
 import com.ams.dev.api.parking.permission.persistence.repository.PermissionRepository;
 import com.ams.dev.api.parking.permission.persistence.specification.SpecificationPermission;
 import com.ams.dev.api.parking.permission.service.PermissionService;
+import com.ams.dev.api.parking.permission.util.StatusPermisison;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -122,6 +123,24 @@ public class PermissionServiceImpl implements PermissionService {
 
         return new ApiResponseDto(HttpStatus.OK.value(),"El registro cambio de estado de forma exitosa", this.permissionMapper.convertToDto(permisisonDisabled));
 
+    }
+
+    @Override
+    public List<PermissionEntity> validatePermissions(List<PermissionDto> permissionDtos) throws BadRequestException, NotFoundException {
+        List<PermissionEntity> validatePermissions = new ArrayList<>();
+
+        for (PermissionDto dto : permissionDtos) {
+            PermissionEntity permissionBD = this.permissionRepository.findById(dto.getId()).orElse(null);
+
+            if (permissionBD == null)
+                throw new NotFoundException("El permiso con nombre " + dto.getName() + " no existe");
+
+            if (permissionBD.getStatus().equals(StatusPermisison.DELETED))
+                throw new BadRequestException("No se puede asigar este el rol " + permissionBD.getName() + " porque esta con estatus eliminado");
+
+            validatePermissions.add(permissionBD);
+        }
+        return validatePermissions;
     }
 
     private List<ValidateInputDto> validateInputs(BindingResult bindingResult){
