@@ -36,6 +36,15 @@ public class PermissionServiceImpl implements PermissionService {
     private PermissionRepository permissionRepository;
 
     @Override
+    public ApiResponseDto executeGetPermission(UUID idPermission) throws NotFoundException {
+        PermissionEntity permissionBD = this.permissionRepository.findById(idPermission).orElse(null);
+        if (permissionBD == null)
+            throw new NotFoundException("No se encontro el permiso con ID " + idPermission);
+
+        return new ApiResponseDto(HttpStatus.OK.value(),"Información detallada del registro", this.permissionMapper.convertToDto(permissionBD));
+    }
+
+    @Override
     public ApiResponseDto executeListPermisisons(UUID idPermission, String name, String module, String status, int page, int size) throws NotFoundException {
         Pageable pageable = PageRequest.of(page,size);
         Specification<PermissionEntity> spec = SpecificationPermission.withFilter(idPermission,name,module,status);

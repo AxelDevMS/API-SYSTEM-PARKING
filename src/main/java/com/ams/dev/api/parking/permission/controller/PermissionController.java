@@ -54,5 +54,11 @@ public class PermissionController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/get/{idPermission}")
+    public ResponseEntity<ApiResponseDto> executeGetPermission(@PathVariable UUID idPermission) throws NotFoundException {
+        ApiResponseDto response = this.permissionService.executeGetPermission(idPermission);
+        return ResponseEntity.ok(response);
+    }
+
 
 }
