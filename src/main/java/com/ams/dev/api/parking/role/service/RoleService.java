@@ -6,8 +6,10 @@ import com.ams.dev.api.parking.exception.NotFoundException;
 import com.ams.dev.api.parking.role.dto.RoleDto;
 import org.springframework.validation.BindingResult;
 
+import java.util.UUID;
+
 public interface RoleService {
 
     ApiResponseDto executeCreateRole(RoleDto roleDto, BindingResult bindingResult) throws BadRequestException, NotFoundException;
-
+    ApiResponseDto executeUpdateRole(UUID idRole, RoleDto roleDto, BindingResult bindingResult) throws BadRequestException, NotFoundException;
 }

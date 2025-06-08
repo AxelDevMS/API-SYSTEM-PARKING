@@ -11,6 +11,7 @@ import com.ams.dev.api.parking.role.mapper.RoleMapper;
 import com.ams.dev.api.parking.role.persistence.entity.RoleEntity;
 import com.ams.dev.api.parking.role.persistence.repository.RoleRepository;
 import com.ams.dev.api.parking.role.service.RoleService;
+import com.ams.dev.api.parking.role.util.StatusRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -30,6 +32,27 @@ public class RoleServiceImpl implements RoleService {
 
     @Autowired
     private PermissionService permissionService;
+
+    @Override
+    public ApiResponseDto executeUpdateRole(UUID idRole, RoleDto roleDto, BindingResult bindingResult) throws BadRequestException, NotFoundException {
+        List<ValidateInputDto> inputs = this.validateInputs(bindingResult);
+        if (!inputs.isEmpty())
+            throw  new BadRequestException("Campos invalidos!", inputs);
+
+        RoleEntity roleBD = this.roleRepository.findById(idRole).orElse(null);
+        if (roleBD == null)
+            throw new NotFoundException("No existe este rol con id "+ idRole);
+
+        List<PermissionEntity> permissionsBD = this.permissionService.validatePermissions(roleDto.getPermissions());
+
+        roleBD.setName(roleDto.getName());
+        roleBD.setDescription(roleDto.getDescription());
+        roleBD.setStatus(roleDto.getStatus());
+        roleBD.setPermissions(permissionsBD);
+
+        RoleEntity roleSave = this.roleRepository.save(roleBD);
+        return new ApiResponseDto(HttpStatus.OK.value(),"El registro se actualizo exitosamente",this.roleMapper.convertToDto(roleSave));
+    }
 
     @Override
     public ApiResponseDto executeCreateRole(RoleDto roleDto, BindingResult bindingResult) throws BadRequestException, NotFoundException {
