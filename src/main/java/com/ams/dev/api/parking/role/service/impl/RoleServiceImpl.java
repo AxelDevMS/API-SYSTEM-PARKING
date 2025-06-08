@@ -7,12 +7,18 @@ import com.ams.dev.api.parking.exception.NotFoundException;
 import com.ams.dev.api.parking.permission.persistence.entity.PermissionEntity;
 import com.ams.dev.api.parking.permission.service.PermissionService;
 import com.ams.dev.api.parking.role.dto.RoleDto;
+import com.ams.dev.api.parking.role.dto.RolesListDto;
 import com.ams.dev.api.parking.role.mapper.RoleMapper;
 import com.ams.dev.api.parking.role.persistence.entity.RoleEntity;
+import com.ams.dev.api.parking.role.persistence.filter.FilterRole;
 import com.ams.dev.api.parking.role.persistence.repository.RoleRepository;
 import com.ams.dev.api.parking.role.service.RoleService;
 import com.ams.dev.api.parking.role.util.StatusRole;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -20,6 +26,7 @@ import org.springframework.validation.BindingResult;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -32,6 +39,25 @@ public class RoleServiceImpl implements RoleService {
 
     @Autowired
     private PermissionService permissionService;
+
+
+    @Override
+    public ApiResponseDto executeGetListRoles(int page, int size, UUID idRole, String status, String name) throws NotFoundException {
+        Pageable pageable = PageRequest.of(page,size);
+        Specification<RoleEntity> filterRole = FilterRole.withFilter(idRole, name, status);
+        Page<RoleEntity> listRoles = this.roleRepository.findAll(filterRole, pageable);
+
+        if (listRoles.isEmpty())
+            throw new NotFoundException("No tienes registros en el sistema");
+
+        List<RoleDto> listRolesDto = listRoles.getContent().stream().map(roleMapper::convertToDto).collect(Collectors.toList());
+        RolesListDto data = new RolesListDto();
+        data.setRoles(listRolesDto);
+        data.setTotalElements((int) listRoles.getTotalElements());
+        return new ApiResponseDto(HttpStatus.OK.value(),"Lista de Roles paginados", data);
+    }
+
+
 
     @Override
     public ApiResponseDto executeUpdateRole(UUID idRole, RoleDto roleDto, BindingResult bindingResult) throws BadRequestException, NotFoundException {

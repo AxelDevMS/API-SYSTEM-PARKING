@@ -6,6 +6,7 @@ import com.ams.dev.api.parking.exception.BadRequestException;
 import com.ams.dev.api.parking.exception.NotFoundException;
 import com.ams.dev.api.parking.role.dto.RoleDto;
 import com.ams.dev.api.parking.role.service.RoleService;
+import jakarta.persistence.Entity;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,5 +33,17 @@ public class RoleController {
     public ResponseEntity<ApiResponseDto> executeUpdateRole(@PathVariable UUID id, @Valid @RequestBody RoleDto roleDto, BindingResult bindingResult) throws BadRequestException, NotFoundException {
         ApiResponseDto response = this.roleService.executeUpdateRole(id, roleDto, bindingResult);
         return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @GetMapping("/get/alls")
+    public ResponseEntity<ApiResponseDto> executeGetListRoles(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) UUID idRole,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String status
+    ) throws NotFoundException {
+        ApiResponseDto response = this.roleService.executeGetListRoles(page, size, idRole, name, status);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
