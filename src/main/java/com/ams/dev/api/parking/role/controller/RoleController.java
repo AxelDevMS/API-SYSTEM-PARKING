@@ -4,6 +4,7 @@ package com.ams.dev.api.parking.role.controller;
 import com.ams.dev.api.parking.dto.ApiResponseDto;
 import com.ams.dev.api.parking.exception.BadRequestException;
 import com.ams.dev.api.parking.exception.NotFoundException;
+import com.ams.dev.api.parking.role.dto.DisabledRoleDto;
 import com.ams.dev.api.parking.role.dto.RoleDto;
 import com.ams.dev.api.parking.role.service.RoleService;
 import jakarta.persistence.Entity;
@@ -45,5 +46,11 @@ public class RoleController {
     ) throws NotFoundException {
         ApiResponseDto response = this.roleService.executeGetListRoles(page, size, idRole, name, status);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping("disabled/{id}")
+    public ResponseEntity<ApiResponseDto> executeDisabledRole(@PathVariable UUID id, @RequestBody DisabledRoleDto disabledRoleDto) throws NotFoundException {
+        ApiResponseDto response = this.roleService.executeDisabledRole(id, disabledRoleDto);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }
