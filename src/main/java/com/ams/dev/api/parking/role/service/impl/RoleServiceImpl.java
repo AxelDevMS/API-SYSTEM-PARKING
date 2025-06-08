@@ -14,6 +14,7 @@ import com.ams.dev.api.parking.role.persistence.entity.RoleEntity;
 import com.ams.dev.api.parking.role.persistence.filter.FilterRole;
 import com.ams.dev.api.parking.role.persistence.repository.RoleRepository;
 import com.ams.dev.api.parking.role.service.RoleService;
+import com.ams.dev.api.parking.role.util.StatusRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +41,25 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private PermissionService permissionService;
 
+
+    @Override
+    public ApiResponseDto executeGetListBySelecy() throws NotFoundException {
+        List<RoleEntity> roles = this.roleRepository.findAllByStatusNot(StatusRole.DELETED);
+        if (roles.isEmpty())
+            throw new NotFoundException("No tienes registros");
+
+        List<RoleDto> rolesDtos = roles.stream().map(roleMapper::convertToDto).collect(Collectors.toList());
+        return new ApiResponseDto(HttpStatus.OK.value(),"Listado de roles", rolesDtos);
+    }
+
+    @Override
+    public ApiResponseDto executeGteyRoleById(UUID idRole) throws NotFoundException {
+        RoleEntity roleBD = this.roleRepository.findById(idRole).orElse(null);
+        if (roleBD == null)
+            throw new NotFoundException("No existes este rol con ID "+idRole);
+
+        return new ApiResponseDto(HttpStatus.OK.value(), "Información del Rol", this.roleMapper.convertToDto(roleBD));
+    }
 
     @Override
     public ApiResponseDto executeDisabledRole(UUID idRole, DisabledRoleDto disabledRoleDto) throws NotFoundException {

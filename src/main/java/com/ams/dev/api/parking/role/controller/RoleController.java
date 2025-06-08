@@ -53,4 +53,16 @@ public class RoleController {
         ApiResponseDto response = this.roleService.executeDisabledRole(id, disabledRoleDto);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
+
+    @GetMapping("/select/alls")
+    public ResponseEntity<ApiResponseDto> executeGetRolesBySelect() throws NotFoundException {
+        ApiResponseDto response = this.roleService.executeGetListBySelecy();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<ApiResponseDto> executeGetRoleBYiD(@PathVariable UUID id) throws NotFoundException {
+        ApiResponseDto response = this.roleService.executeGteyRoleById(id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

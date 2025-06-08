@@ -15,5 +15,7 @@ public interface RoleService {
     ApiResponseDto executeUpdateRole(UUID idRole, RoleDto roleDto, BindingResult bindingResult) throws BadRequestException, NotFoundException;
     ApiResponseDto executeGetListRoles(int page, int size, UUID idRole, String status, String name) throws NotFoundException;
     ApiResponseDto executeDisabledRole(UUID idRole, DisabledRoleDto disabledRoleDto) throws NotFoundException;
+    ApiResponseDto executeGetListBySelecy() throws NotFoundException;
+    ApiResponseDto executeGteyRoleById(UUID idRole) throws NotFoundException;
 
 }
