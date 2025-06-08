@@ -1,9 +1,9 @@
-package com.ams.dev.api.parking.permission.persistence.entity;
+package com.ams.dev.api.parking.role.persistence.entity;
 
-import com.ams.dev.api.parking.permission.util.ModuleSystem;
-import com.ams.dev.api.parking.permission.util.NamePermission;
-import com.ams.dev.api.parking.permission.util.StatusPermisison;
-import com.ams.dev.api.parking.role.persistence.entity.RoleEntity;
+
+import com.ams.dev.api.parking.permission.persistence.entity.PermissionEntity;
+import com.ams.dev.api.parking.role.util.NameRole;
+import com.ams.dev.api.parking.role.util.StatusRole;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -12,28 +12,25 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-
 @Entity
-@Table(name = "permisison")
-public class PermissionEntity {
+@Table(name = "role")
+public class RoleEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Enumerated(EnumType.STRING)
-    private NamePermission name;
+    private NameRole name;
 
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private StatusPermisison status;
+    private StatusRole status;
 
-    @Enumerated(EnumType.STRING)
-    private ModuleSystem module;
-
-    @ManyToMany(mappedBy = "permissions")
-    private List<RoleEntity> roles;
+    @ManyToMany
+    @JoinTable(name = "role_permission", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    private List<PermissionEntity> permissions;
 
     @CreationTimestamp
     private Date createdAt;
@@ -49,11 +46,11 @@ public class PermissionEntity {
         this.id = id;
     }
 
-    public NamePermission getName() {
+    public NameRole getName() {
         return name;
     }
 
-    public void setName(NamePermission name) {
+    public void setName(NameRole name) {
         this.name = name;
     }
 
@@ -65,20 +62,12 @@ public class PermissionEntity {
         this.description = description;
     }
 
-    public StatusPermisison getStatus() {
+    public StatusRole getStatus() {
         return status;
     }
 
-    public void setStatus(StatusPermisison status) {
+    public void setStatus(StatusRole status) {
         this.status = status;
-    }
-
-    public ModuleSystem getModule() {
-        return module;
-    }
-
-    public void setModule(ModuleSystem module) {
-        this.module = module;
     }
 
     public Date getCreatedAt() {
@@ -97,11 +86,11 @@ public class PermissionEntity {
         this.updatedAt = updatedAt;
     }
 
-    public List<RoleEntity> getRoles() {
-        return roles;
+    public List<PermissionEntity> getPermissions() {
+        return permissions;
     }
 
-    public void setRoles(List<RoleEntity> roles) {
-        this.roles = roles;
+    public void setPermissions(List<PermissionEntity> permissions) {
+        this.permissions = permissions;
     }
 }
