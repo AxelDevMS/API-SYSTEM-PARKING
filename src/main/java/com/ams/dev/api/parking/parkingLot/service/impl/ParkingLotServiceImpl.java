@@ -3,6 +3,7 @@ package com.ams.dev.api.parking.parkingLot.service.impl;
 import com.ams.dev.api.parking.dto.ApiResponseDto;
 import com.ams.dev.api.parking.dto.ValidateInputDto;
 import com.ams.dev.api.parking.exception.BadRequestException;
+import com.ams.dev.api.parking.exception.NotFoundException;
 import com.ams.dev.api.parking.parkingLot.dto.ParkingLotDto;
 import com.ams.dev.api.parking.parkingLot.mapper.ParkingLotMapper;
 import com.ams.dev.api.parking.parkingLot.persistence.entity.ParkingLotEntity;
@@ -15,6 +16,7 @@ import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ParkingLotServiceImpl implements ParkingLotService {
@@ -24,6 +26,16 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Autowired
     private ParkingLotRepository parkingLotRepository;
+
+    @Override
+    public ApiResponseDto executeGetListParkingBySelec() throws NotFoundException {
+        List<ParkingLotEntity> listParkings  = this.parkingLotRepository.findAll();
+        if (listParkings.isEmpty())
+            throw new NotFoundException("No tienes estacionamientos registrados");
+
+        List<ParkingLotDto> listParkingsDto = listParkings.stream().map(parkingLotMapper::convertToDto).collect(Collectors.toList());
+        return new ApiResponseDto(HttpStatus.OK.value(), "Listado de estacionamientos", listParkingsDto);
+    }
 
     @Override
     public ApiResponseDto executeCreateParkingLot(ParkingLotDto parkingLotDto, BindingResult bindingResult) throws BadRequestException {
