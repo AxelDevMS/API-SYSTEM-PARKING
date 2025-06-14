@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("api/parking/lot")
 public class ParkingLotController {
@@ -28,6 +30,12 @@ public class ParkingLotController {
     @GetMapping("/alls/select")
     public ResponseEntity<ApiResponseDto> executeGetListParkingsBySelect() throws NotFoundException {
         ApiResponseDto response = this.parkingLotService.executeGetListParkingBySelec();
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @GetMapping("/get/{parkingId}")
+    public ResponseEntity<ApiResponseDto> executeGetParkingById(@PathVariable UUID parkingId) throws NotFoundException {
+        ApiResponseDto response = this.parkingLotService.executeGetParkingById(parkingId);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

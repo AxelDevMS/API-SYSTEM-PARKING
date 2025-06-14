@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +27,15 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Autowired
     private ParkingLotRepository parkingLotRepository;
+
+    @Override
+    public ApiResponseDto executeGetParkingById(UUID parkingId) throws NotFoundException {
+        ParkingLotEntity parkingBD = this.parkingLotRepository.findById(parkingId).orElse(null);
+        if (parkingBD == null)
+            throw new NotFoundException("No existe este parking con ID "+ parkingId);
+
+        return new ApiResponseDto(HttpStatus.OK.value(), "Información detallada del parking", this.parkingLotMapper.convertToDto(parkingBD));
+    }
 
     @Override
     public ApiResponseDto executeGetListParkingBySelec() throws NotFoundException {
