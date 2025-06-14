@@ -38,4 +38,15 @@ public class ParkingLotController {
         ApiResponseDto response = this.parkingLotService.executeGetParkingById(parkingId);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
+
+    @GetMapping("/alls")
+    public ResponseEntity<ApiResponseDto> executeGetListParkings(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(required = false) UUID parkingId,
+            @RequestParam(required = false) String status
+    ) throws NotFoundException {
+        ApiResponseDto response = this.parkingLotService.executeGetListParkingss(page, size, parkingId, status);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

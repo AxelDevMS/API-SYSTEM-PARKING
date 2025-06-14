@@ -13,5 +13,6 @@ public interface ParkingLotService {
     ApiResponseDto executeCreateParkingLot(ParkingLotDto parkingLotDto, BindingResult bindingResult) throws BadRequestException;
     ApiResponseDto executeGetListParkingBySelec() throws NotFoundException;
     ApiResponseDto executeGetParkingById(UUID parkingId) throws NotFoundException;
+    ApiResponseDto executeGetListParkingss(int page, int size, UUID parkingId, String status) throws NotFoundException;
 
 }

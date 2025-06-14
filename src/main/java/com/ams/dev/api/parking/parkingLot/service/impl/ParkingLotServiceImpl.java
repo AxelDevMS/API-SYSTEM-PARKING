@@ -5,11 +5,17 @@ import com.ams.dev.api.parking.dto.ValidateInputDto;
 import com.ams.dev.api.parking.exception.BadRequestException;
 import com.ams.dev.api.parking.exception.NotFoundException;
 import com.ams.dev.api.parking.parkingLot.dto.ParkingLotDto;
+import com.ams.dev.api.parking.parkingLot.dto.ParkingLotListDto;
 import com.ams.dev.api.parking.parkingLot.mapper.ParkingLotMapper;
 import com.ams.dev.api.parking.parkingLot.persistence.entity.ParkingLotEntity;
+import com.ams.dev.api.parking.parkingLot.persistence.filter.ParkingLotFilter;
 import com.ams.dev.api.parking.parkingLot.persistence.repository.ParkingLotRepository;
 import com.ams.dev.api.parking.parkingLot.service.ParkingLotService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
@@ -27,6 +33,22 @@ public class ParkingLotServiceImpl implements ParkingLotService {
 
     @Autowired
     private ParkingLotRepository parkingLotRepository;
+
+    @Override
+    public ApiResponseDto executeGetListParkingss(int page, int size, UUID parkingId, String status) throws NotFoundException {
+        Pageable pageable = PageRequest.of(page,size);
+        Specification<ParkingLotEntity> filterParking = ParkingLotFilter.wwithFilter(parkingId,status);
+        Page<ParkingLotEntity> listParkingss = this.parkingLotRepository.findAll(filterParking,pageable);
+
+        if (listParkingss.isEmpty())
+            throw new NotFoundException("No tienes estacionamientos registrados");
+
+        List<ParkingLotDto> parkingLotDtoList = listParkingss.getContent().stream().map(parkingLotMapper::convertToDto).collect(Collectors.toList());
+        ParkingLotListDto data = new ParkingLotListDto();
+        data.setParkings(parkingLotDtoList);
+        data.setTotalElements((int) listParkingss.getTotalElements());
+        return new ApiResponseDto(HttpStatus.OK.value(), "Listado de estacionamientos", data);
+    }
 
     @Override
     public ApiResponseDto executeGetParkingById(UUID parkingId) throws NotFoundException {
