@@ -3,6 +3,7 @@ package com.ams.dev.api.parking.parkingLot.controller;
 import com.ams.dev.api.parking.dto.ApiResponseDto;
 import com.ams.dev.api.parking.exception.BadRequestException;
 import com.ams.dev.api.parking.exception.NotFoundException;
+import com.ams.dev.api.parking.parkingLot.dto.DisabledParkingLotDto;
 import com.ams.dev.api.parking.parkingLot.dto.ParkingLotDto;
 import com.ams.dev.api.parking.parkingLot.service.ParkingLotService;
 import jakarta.validation.Valid;
@@ -47,6 +48,18 @@ public class ParkingLotController {
             @RequestParam(required = false) String status
     ) throws NotFoundException {
         ApiResponseDto response = this.parkingLotService.executeGetListParkingss(page, size, parkingId, status);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/update/{parkingId}")
+    public ResponseEntity<ApiResponseDto> executeUpdateParkingLot(@PathVariable UUID parkingId, @RequestBody @Valid ParkingLotDto parkingLotDto, BindingResult bindingResult) throws NotFoundException, BadRequestException {
+        ApiResponseDto response = this.parkingLotService.executeUpdateParkingLot(parkingId, parkingLotDto, bindingResult);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping("/disabled/{parkingId}")
+    public ResponseEntity<ApiResponseDto> executeDisabledParkingLot(@PathVariable UUID parkingId, @RequestBody @Valid DisabledParkingLotDto disabledParkingLotDto, BindingResult bindingResult) throws BadRequestException, NotFoundException {
+        ApiResponseDto response = this.parkingLotService.executeDisabledParkingLot(parkingId, disabledParkingLotDto);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
