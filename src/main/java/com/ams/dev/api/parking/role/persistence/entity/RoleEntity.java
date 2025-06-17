@@ -4,6 +4,7 @@ package com.ams.dev.api.parking.role.persistence.entity;
 import com.ams.dev.api.parking.permission.persistence.entity.PermissionEntity;
 import com.ams.dev.api.parking.role.util.NameRole;
 import com.ams.dev.api.parking.role.util.StatusRole;
+import com.ams.dev.api.parking.user.persistence.entity.UserEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -31,6 +32,9 @@ public class RoleEntity {
     @ManyToMany
     @JoinTable(name = "role_permission", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private List<PermissionEntity> permissions;
+
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+    private List<UserEntity> user;
 
     @CreationTimestamp
     private Date createdAt;
@@ -92,5 +96,13 @@ public class RoleEntity {
 
     public void setPermissions(List<PermissionEntity> permissions) {
         this.permissions = permissions;
+    }
+
+    public List<UserEntity> getUser() {
+        return user;
+    }
+
+    public void setUser(List<UserEntity> user) {
+        this.user = user;
     }
 }

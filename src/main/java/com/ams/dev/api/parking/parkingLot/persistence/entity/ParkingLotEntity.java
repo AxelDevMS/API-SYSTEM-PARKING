@@ -1,11 +1,13 @@
 package com.ams.dev.api.parking.parkingLot.persistence.entity;
 
 import com.ams.dev.api.parking.parkingLot.util.StatusParkingLot;
+import com.ams.dev.api.parking.user.persistence.entity.UserEntity;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -24,6 +26,9 @@ public class ParkingLotEntity {
 
     @Enumerated(EnumType.STRING)
     private StatusParkingLot status;
+
+    @OneToMany(mappedBy = "parking", cascade = CascadeType.ALL)
+    private List<UserEntity> users;
 
     @CreationTimestamp
     private Date createdAt;
@@ -86,5 +91,13 @@ public class ParkingLotEntity {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<UserEntity> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<UserEntity> users) {
+        this.users = users;
     }
 }
