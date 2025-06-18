@@ -44,13 +44,7 @@ public class UserServiceImpl implements UserService {
         if (!inputs.isEmpty())
             throw new BadRequestException("Campos invalidos", inputs);
 
-        UserEntity userBD = this.userRepository.findByUsername(userDto.getUsername()).orElse(null);
-        if (userBD != null)
-            throw  new BadRequestException("Ya existe un usuario con este es username "+ userDto.getUsername());
-
-        UserEntity userBDEmail = this.userRepository.findByEmail(userDto.getEmail()).orElse(null);
-        if (userBDEmail != null)
-            throw new BadRequestException("Ya existe un usuario con este correo electronico "+userDto.getEmail());
+        this.validateUsernameAndEmail(userDto);
 
         if (!userDto.getPassword().equals(userDto.getConfirmPassword()))
             throw new BadRequestException("Las contraseñas no coninciden");
@@ -68,6 +62,20 @@ public class UserServiceImpl implements UserService {
         user.setParking(parkingLotBD);
         user = this.userRepository.save(user);
         return new ApiResponseDto(HttpStatus.CREATED.value(),"El empleado se registro de forma existosa", this.userMapper.convertToDto(user));
+    }
+
+    private void validateUsernameAndEmail(UserDto userDto) throws BadRequestException {
+        UserEntity userBD = this.userRepository.findByUsername(userDto.getUsername()).orElse(null);
+        if (userBD != null)
+            throw  new BadRequestException("Ya existe un usuario con este es username "+ userDto.getUsername());
+
+        UserEntity userBDEmail = this.userRepository.findByEmail(userDto.getEmail()).orElse(null);
+        if (userBDEmail != null)
+            throw new BadRequestException("Ya existe un usuario con este correo electronico "+userDto.getEmail());
+    }
+
+    private void validateRoleAndParking(){
+
     }
 
     private List<ValidateInputDto> validateInputDtos(BindingResult bindingResult){
