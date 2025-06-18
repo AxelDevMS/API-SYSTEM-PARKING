@@ -5,6 +5,7 @@ import com.ams.dev.api.parking.exception.BadRequestException;
 import com.ams.dev.api.parking.exception.NotFoundException;
 import com.ams.dev.api.parking.role.dto.DisabledRoleDto;
 import com.ams.dev.api.parking.role.dto.RoleDto;
+import com.ams.dev.api.parking.role.persistence.entity.RoleEntity;
 import org.springframework.validation.BindingResult;
 
 import java.util.UUID;
@@ -17,5 +18,6 @@ public interface RoleService {
     ApiResponseDto executeDisabledRole(UUID idRole, DisabledRoleDto disabledRoleDto) throws NotFoundException;
     ApiResponseDto executeGetListBySelecy() throws NotFoundException;
     ApiResponseDto executeGteyRoleById(UUID idRole) throws NotFoundException;
+    RoleEntity getRoleById(UUID roleId);
 
 }

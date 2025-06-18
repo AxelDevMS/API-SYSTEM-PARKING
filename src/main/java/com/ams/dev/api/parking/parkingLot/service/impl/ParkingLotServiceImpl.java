@@ -116,6 +116,11 @@ public class ParkingLotServiceImpl implements ParkingLotService {
         return new ApiResponseDto(HttpStatus.CREATED.value(), "El parking se ha registrado de forma exitosa", this.parkingLotMapper.convertToDto(save));
     }
 
+    @Override
+    public ParkingLotEntity getParkingById(UUID parkingLotId) {
+        return this.parkingLotRepository.findById(parkingLotId).orElse(null);
+    }
+
     private List<ValidateInputDto> validateInputs(BindingResult bindingResult){
         List<ValidateInputDto> inputs = new ArrayList<>();
         if (bindingResult.hasErrors()){

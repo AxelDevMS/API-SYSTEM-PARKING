@@ -1,53 +1,64 @@
-package com.ams.dev.api.parking.user.persistence.entity;
+package com.ams.dev.api.parking.user.dto;
 
-import com.ams.dev.api.parking.parkingLot.persistence.entity.ParkingLotEntity;
-import com.ams.dev.api.parking.role.persistence.entity.RoleEntity;
+import com.ams.dev.api.parking.parkingLot.dto.ParkingLotDto;
+import com.ams.dev.api.parking.role.dto.RoleDto;
 import com.ams.dev.api.parking.user.Utils.StatusUser;
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
-@Entity
-@Table(name = "\"user\"")
-public class UserEntity {
+public class UserDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @NotNull(message = "El nombre debe ser informado")
+    @NotBlank(message = "El nombre no puede estar vacio")
     private String name;
 
+    @NotNull(message = "El apellido debe ser informado")
+    @NotBlank(message = "El apellido no puede estar vacio")
     private String lastname;
 
+    @NotNull(message = "El numero telefonico debe ser informado")
     private BigDecimal phone;
 
+    @NotNull(message = "La dirección debe ser informado")
+    @NotBlank(message = "La dirección no puede estar vacio")
     private String location;
 
+    @NotNull(message = "El username debe ser informado")
+    @NotBlank(message = "El username no puede estar vacio")
     private String username;
 
+    @NotNull(message = "El corre electronico debe ser informado")
+    @NotBlank(message = "El correo electronico no puede estar vacio")
     private String email;
 
+    @NotNull(message = "La confirmación de contraseña debe ser informado")
+    @NotBlank(message = "La confirmación de contraseña no puede estar vacio")
+    private String confirmPassword;
+
+    @NotNull(message = "La contraseña debe ser informado")
+    @NotBlank(message = "El contraseña no puede estar vacio")
     private String password;
 
-    @Enumerated(EnumType.STRING)
+    @NotNull(message = "El status debe ser informado")
     private StatusUser status;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private RoleEntity role;
+    @NotNull(message = "El usuario debe tener un rol asignado")
+    private RoleDto role;
 
-    @ManyToOne
-    @JoinColumn(name = "parking_id")
-    private ParkingLotEntity parking;
+    @NotNull(message = "El usuario debe tener un estacionamiento asignado")
+    private ParkingLotDto parking;
 
-    @CreationTimestamp
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm", timezone = "America/Mexico_City")
     private Date createdAt;
 
-    @UpdateTimestamp
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm", timezone = "America/Mexico_City")
     private Date updatedAt;
 
     public UUID getId() {
@@ -114,19 +125,19 @@ public class UserEntity {
         this.status = status;
     }
 
-    public RoleEntity getRole() {
+    public RoleDto getRole() {
         return role;
     }
 
-    public void setRole(RoleEntity role) {
+    public void setRole(RoleDto role) {
         this.role = role;
     }
 
-    public ParkingLotEntity getParking() {
+    public ParkingLotDto getParking() {
         return parking;
     }
 
-    public void setParking(ParkingLotEntity parking) {
+    public void setParking(ParkingLotDto parking) {
         this.parking = parking;
     }
 
@@ -152,5 +163,13 @@ public class UserEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 }

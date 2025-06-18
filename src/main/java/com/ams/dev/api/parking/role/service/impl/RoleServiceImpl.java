@@ -131,7 +131,10 @@ public class RoleServiceImpl implements RoleService {
         return new ApiResponseDto(HttpStatus.CREATED.value(),"El registro s eha insertado correctamente", this.roleMapper.convertToDto(saveRole));
     }
 
-
+    @Override
+    public RoleEntity getRoleById(UUID roleId) {
+        return this.roleRepository.findById(roleId).orElse(null);
+    }
 
     private List<ValidateInputDto> validateInputs(BindingResult bindingResult){
         List<ValidateInputDto> inputs = new ArrayList<>();
